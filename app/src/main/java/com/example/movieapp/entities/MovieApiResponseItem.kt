@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-
+// Creating entity class with indices (unique ids)to not save duplicate data in database
 @Entity(tableName = "MOVIES",indices = [Index(value = ["id"], unique = true)])
 data class MovieApiResponseItem(
     @PrimaryKey(autoGenerate = true)

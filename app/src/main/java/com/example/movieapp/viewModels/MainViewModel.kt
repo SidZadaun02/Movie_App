@@ -29,6 +29,7 @@ class MainViewModel @Inject constructor(private val networkRepository: NetworkRe
         getRatingData()
     }
 
+    //fetching the movieList data from server and saving it in model and also saving the data in database
     @SuppressLint("LogNotTimber")
     fun getMovieListData() {
         viewModelScope.launch {
@@ -50,6 +51,7 @@ class MainViewModel @Inject constructor(private val networkRepository: NetworkRe
         }
     }
 
+    //fetching data from database and saving it in model
     fun getDataBaseData(){
         viewModelScope.launch {
             dataBaseRepository.getMovies().collectLatest { movies ->
@@ -58,6 +60,7 @@ class MainViewModel @Inject constructor(private val networkRepository: NetworkRe
         }
     }
 
+    //method for saving the data into database
     private fun insertMovie(movie: List<MovieApiResponseItem>) {
         viewModelScope.launch {
             for (i in movie.indices) {
@@ -67,6 +70,8 @@ class MainViewModel @Inject constructor(private val networkRepository: NetworkRe
     }
 
 
+    //fetching the rating data from server and also setting it in LiveData with changes in every minute
+    //comparing with ids of movie to change the rating of movies
     @SuppressLint("LogNotTimber")
     fun getRatingData() {
         viewModelScope.launch {

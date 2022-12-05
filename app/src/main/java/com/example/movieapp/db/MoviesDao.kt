@@ -10,9 +10,12 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MoviesDao {
 
+    // adding data to database
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(movieEntity: MovieApiResponseItem)
 
+
+    // calling data from database
     @Query("SELECT* FROM MOVIES")
     fun getMovies(): Flow<List<MovieApiResponseItem>>
 }

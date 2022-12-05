@@ -16,6 +16,7 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
 
+    // Using Moshi for JSON Parsing
     @Provides
     fun providesMoshi(): Moshi {
         return Moshi.Builder()
@@ -23,7 +24,7 @@ object NetworkModule {
             .build()
     }
 
-
+    // Building retrofit with Base URL
     @Provides
     @Singleton
     fun providesRetrofit(moshi: Moshi): Retrofit {
@@ -32,9 +33,11 @@ object NetworkModule {
             .build()
     }
 
+    // Providing Api services to retrofit to fetch data from server
     @Provides
     fun providesMovieApiService(retrofit: Retrofit): MovieApiService {
         return retrofit.create(MovieApiService::class.java)
     }
+
 
 }

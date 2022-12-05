@@ -40,13 +40,14 @@ class MovieListAdapter @Inject constructor() :
     class MovieItemViewHolder(val binding: ItemMovieBinding) :
         RecyclerView.ViewHolder(binding.root)
 
+    //setting item click listener
     private var setMovieItemClickListener: ((movie: MovieApiResponseItem) -> Unit)? = null
 
     fun onMovieItemClicked(listener: (MovieApiResponseItem) -> Unit) {
         setMovieItemClickListener = listener
     }
 
-
+    //Using Diffutils for updaing the data after polling
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<MovieApiResponseItem>() {
             override fun areItemsTheSame(

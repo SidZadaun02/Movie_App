@@ -44,6 +44,8 @@ class MovieListFragment : Fragment() {
         binding = FragmentMovieListBinding.bind(view)
         init()
 
+        //Using if else with check is device is connected with internet or not
+        //to show the data from network or database
         if (isInternetAvailable()) {
             viewModel.getMovieListData()
         } else {
@@ -54,6 +56,7 @@ class MovieListFragment : Fragment() {
         setObservers()
     }
 
+    //Setting up pagination for endless feed
     private fun setUpLoadMoreListener() {
         binding.movieRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -77,6 +80,7 @@ class MovieListFragment : Fragment() {
         })
     }
 
+    //Setting up observer to observe LiveData
     @SuppressLint("LogNotTimber")
     private fun setObservers() {
         viewModel.movieListData.observe(viewLifecycleOwner) { list ->
@@ -88,6 +92,7 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    //Setting up adapter for recyclerView and also setting layout manager for to recyclerView
     private fun init() {
         movieAdapter.onMovieItemClicked { movie ->
             viewModel.selectedMovie = movie
@@ -99,6 +104,7 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    //method to check weather device is connected to internet or not
     private fun isInternetAvailable(): Boolean {
             val connectivity =
                 requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
