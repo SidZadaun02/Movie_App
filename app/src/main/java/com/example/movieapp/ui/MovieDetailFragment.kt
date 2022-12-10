@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.example.movieapp.viewModels.MainViewModel
 import com.example.movieapp.R
 import com.example.movieapp.databinding.FragmentMovieDetailBinding
+import com.example.movieapp.ui.movielist.MovieListFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,10 +21,8 @@ class MovieDetailFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: FragmentMovieDetailBinding
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -45,6 +45,9 @@ class MovieDetailFragment : Fragment() {
 
         binding.title.text = viewModel.selectedMovie?.title
         binding.desc.text = viewModel.selectedMovie?.plot
+
+        binding.title.setOnClickListener { findNavController().navigate(MovieDetailFragmentDirections.actionMovieDetailToMovieThird()) }
+
     }
 
 }

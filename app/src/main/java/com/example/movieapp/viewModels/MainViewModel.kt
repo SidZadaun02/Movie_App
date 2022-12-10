@@ -1,6 +1,10 @@
 package com.example.movieapp.viewModels
 
 import android.annotation.SuppressLint
+import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.movieapp.data.response.RatingListResponseItem
@@ -16,49 +20,53 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val networkRepository: NetworkRepository,private val dataBaseRepository: DataBaseRepository) :
-    ViewModel() {
+class MainViewModel @Inject constructor(
+    application: Application,
+    private val networkRepository: NetworkRepository,
+    private val dataBaseRepository: DataBaseRepository
+) :
+    AndroidViewModel(application) {
 
     private var _movieListData: MutableLiveData<List<MovieApiResponseItem>> = MutableLiveData()
     val movieListData: LiveData<List<MovieApiResponseItem>> = _movieListData
-
     var selectedMovie: MovieApiResponseItem? = null
-    var pageNumber = 1
+    private var pageNumber = 1
 
     init {
         getRatingData()
     }
 
+
     //fetching the movieList data from server and saving it in model and also saving the data in database
     @SuppressLint("LogNotTimber")
     fun getMovieListData() {
         viewModelScope.launch {
-            val response = networkRepository.getMovieList(pageNumber)
-            if (response.isSuccessful) {
-                if (response.body()?.size != 0) {
-                    pageNumber++
+            //Using if else with check is device is connected with internet or not
+            //to show the data from network or database
+            if (isInternetAvailable()) {
+                val response = networkRepository.getMovieList(pageNumber)
+                if (response.isSuccessful) {
+                    if (response.body()?.size != 0) {
+                        pageNumber++
+                    }
+                    val list = mutableListOf<MovieApiResponseItem>()
+                    _movieListData.value?.toMutableList()?.let { list.addAll(it) }
+                    response.body()?.toMutableList()?.let { list.addAll(it) }
+                    _movieListData.postValue(list)
+                    insertMovie(list)
+
+                } else {
+                    Log.d("errorResponse***", "${response.errorBody()}")
                 }
-
-                val list = mutableListOf<MovieApiResponseItem>()
-                _movieListData.value?.toMutableList()?.let { list.addAll(it) }
-                response.body()?.toMutableList()?.let { list.addAll(it) }
-                _movieListData.postValue(list)
-                insertMovie(list)
-
             } else {
-                Log.d("errorResponse***", "${response.errorBody()}")
+                //fetching data from database and saving it in model
+                dataBaseRepository.getMovies().collectLatest { movies ->
+                    _movieListData.postValue(movies)
+                }
             }
         }
     }
 
-    //fetching data from database and saving it in model
-    fun getDataBaseData(){
-        viewModelScope.launch {
-            dataBaseRepository.getMovies().collectLatest { movies ->
-                _movieListData.postValue(movies)
-            }
-        }
-    }
 
     //method for saving the data into database
     private fun insertMovie(movie: List<MovieApiResponseItem>) {
@@ -101,5 +109,27 @@ class MainViewModel @Inject constructor(private val networkRepository: NetworkRe
             }
         }
     }
+
+
+    //method to check weather device is connected to internet or not
+    @SuppressLint("NewApi")
+    fun isInternetAvailable(): Boolean {
+        var result = false
+        val connectivity =
+            getApplication<Application>().applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+
+        connectivity?.let {
+            it.getNetworkCapabilities(connectivity.activeNetwork)?.apply {
+                result = when {
+                    hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                    else -> false
+                }
+            }
+        }
+        return result
+    }
+
+
 
 }

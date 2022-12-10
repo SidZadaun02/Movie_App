@@ -55,7 +55,20 @@
         android:name="com.example.movieapp.ui.MovieDetailFragment"
         android:label="Movie App"
         tools:layout="@layout/fragment_movie_detail">
+        <action
+            android:id="@+id/action_movie_detail_to_movie_third"
+            app:destination="@id/movie_third" />
+    </fragment>
 
+
+    <fragment
+        android:id="@+id/movie_third"
+        android:name="com.example.movieapp.ui.movielist.ThirdFragment"
+        android:label="Movie App"
+        tools:layout="@layout/fragment_movie_detail">
+        <action
+            android:id="@+id/action_movie_third_to_movie_detail"
+            app:destination="@id/movie_detail" />
     </fragment>
 
 </navigation>

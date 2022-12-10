@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +18,10 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MovieListFragment : Fragment() {
+class ThirdFragment : Fragment() {
 
     private var canLoadMyFeed: Boolean = true
-    val viewModel: MainViewModel by activityViewModels()
+    val viewModel by viewModels<MainViewModel>()
     private lateinit var binding: FragmentMovieListBinding
 
     @Inject
@@ -85,7 +85,7 @@ class MovieListFragment : Fragment() {
     private fun init() {
         movieAdapter.onMovieItemClicked { movie ->
             viewModel.selectedMovie = movie
-            findNavController().navigate(MovieListFragmentDirections.actionNavigateToDetailScreen())
+            findNavController().navigate(ThirdFragmentDirections.actionMovieThirdToMovieDetail())
         }
         binding.movieRv.apply {
             adapter = movieAdapter
